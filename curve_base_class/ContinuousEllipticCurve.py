@@ -54,7 +54,6 @@ class ContinuousEllipticCurve(object):
                     (np.abs(Q[0] - item[0]) < 0.01
                      and np.abs(Q[1] - item[1]) < 0.01):
                 R.pop(R.index(item))
-        # print(R[0])
         return (float(R[0][0]), -float(R[0][1]))
 
     def get_scalar_multiplication(self, n, P):
@@ -82,31 +81,30 @@ class ContinuousEllipticCurve(object):
 
         if self.__check_on_curve(P) and self.__check_on_curve(Q):
             if P == Q:
+                # CASE 1
                 k = (3 * P[0] ** 2 + self.a) / (2 * P[1])
                 b = P[1] - k * P[0]
-                x = sympy.Symbol('x')
-                y = sympy.Symbol('y')
-                solve = sympy.solve(
-                    [k * x + b - y, x ** 3 + self.a * x + self.b - y ** 2], [x, y]
-                )
-                R = self.__cal_R(P, Q, solve)
+                x = k ** 2 - P[0] - Q[0]
+                y = k * x + b
+                R = (x, -y)
             else:
+                # CASE 2
                 k = (P[1] - Q[1]) / (P[0] - Q[0])
                 b = P[1] - k * P[0]
-                x = sympy.Symbol('x')
-                y = sympy.Symbol('y')
-                solve = sympy.solve(
-                    [k * x + b - y, x ** 3 + self.a * x + self.b - y ** 2], [x, y]
-                )
-                R = self.__cal_R(P, Q, solve)
+                x = k ** 2 - P[0] - Q[0]
+                y = k * x + b
+                R = (x, -y)
             return R
         else:
             raise ValueError
 
+    def __str__(self):
+        return "$$ y^2 = x^3 + {a}x + {b} $$".format(a=self.a, b=self.b)
+
+
+# 计算$R_x \equiv k^2 - x1 - x2 (mod \;p $
 
 if __name__ == '__main__':
     E1 = ContinuousEllipticCurve(-7, 10)
-    E1.get_scalar_multiplication(3, (1, 2))
+    E1.get_scalar_multiplication(8, (1, 2))
     print(E1.R)
-    # 备注部分数字会出现神奇的现象，因为sympy失效了？也许
-    # 关键不是标准直线
