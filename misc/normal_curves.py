@@ -2,7 +2,6 @@ from curve_base_class.DiscreteEllipticCurve import DiscreteEllipticCurve as Elli
 
 curves = {
     'prime192v1': EllipticCurve(
-
         p=0xfffffffffffffffffffffffffffffffeffffffffffffffff,
         a=0xfffffffffffffffffffffffffffffffefffffffffffffffc,
         b=0x64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1,

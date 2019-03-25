@@ -11,7 +11,7 @@ from misc import positive_mod
 
 
 class DiscreteEllipticCurve(object):
-    def __init__(self, a, b, p):
+    def __init__(self, a, b, p, GF=None):
         if 4 * a ** 3 + 27 * b ** 2 == 0:
             raise Warning(BaseException, "curve contains singularities")
         self.a = a
@@ -26,8 +26,10 @@ class DiscreteEllipticCurve(object):
         self.P = (0, 0)
         self.Q = (0, 0)
         self.R = (0, 0)
-        self.know_GF = True
+        self.know_GF = False
         self.GF = 0
+        if GF is not None:
+            self.get_GF(GF)
 
     def get_GF(self, GF):
         '''
@@ -83,6 +85,9 @@ class DiscreteEllipticCurve(object):
     def __check_on_curve(self, point):
         return True if (point[0] ** 3 + self.a * point[0] + self.b - point[1] ** 2) % self.p == 0 else False
 
+    def is_on_curve(self, point):
+        return True if (point[0] ** 3 + self.a * point[0] + self.b - point[1] ** 2) % self.p == 0 else False
+
     def __check_on_line(self, point, k, b):
         return True if (k * point[0] + b - point[1]) % self.p == 0 else False
 
@@ -96,7 +101,9 @@ class DiscreteEllipticCurve(object):
         Returns the result of n * x, computed using
         the double and add algorithm.
         """
+        assert self.__check_on_curve(P)
         if n == 0: return 0, 0
+        if n < 0: return self.get_scalar_multiplication(-n, (P[0], -P[1] % self.p))
         if self.know_GF:
             n = n % self.GF
             self.R = (0, 0)
@@ -152,7 +159,6 @@ class DiscreteEllipticCurve(object):
 
     def __str__(self):
         return "$$ y^2 \equiv x^3 + {a}x + {b} (mod \;{p})$$".format(a=self.a, b=self.b, p=self.p)
-
 
 # if __name__ == '__main__':
 #     E1 = DiscreteEllipticCurve(2, 3, 97)
