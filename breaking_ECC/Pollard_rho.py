@@ -25,7 +25,7 @@ class PollardRhoSequence:
         )
 
     def __iter__(self):
-        partition_size = E.p // 3 + 1
+        partition_size = self.E.p // 3 + 1
 
         x = (0, 0)
         a = 0
@@ -42,23 +42,23 @@ class PollardRhoSequence:
                 # third of the plane (x[0] <= curve.p / 3).
                 a += self.add_a1
                 b += self.add_b1
-                x = E.get_three_pionts(x, self.add_x1)
+                x = self.E.get_three_pionts(x, self.add_x1)
             elif i == 1:
                 # x is in the second third of the plane
                 # (curve.p / 3 < x[0] <= curve.p * 2 / 3).
                 a *= 2
                 b *= 2
-                x = E.get_scalar_multiplication(2, x)
+                x = self.E.get_scalar_multiplication(2, x)
             elif i == 2:
                 # x is in the last third of the plane (x[0] > curve.p * 2 / 3).
                 a += self.add_a2
                 b += self.add_b2
-                x = E.get_three_pionts(x, self.add_x2)
+                x = self.E.get_three_pionts(x, self.add_x2)
             else:
                 raise AssertionError(i)
 
-            a = a % E.GF
-            b = b % E.GF
+            a = a % self.E.GF
+            b = b % self.E.GF
 
             yield x, a, b
 

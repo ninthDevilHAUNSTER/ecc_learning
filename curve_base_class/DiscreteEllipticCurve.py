@@ -157,10 +157,28 @@ class DiscreteEllipticCurve(object):
         except AssertionError as e:
             return 0, 0
 
+    def fast_GF(self, P):
+        # 假设 GF 很大很大，并且和 p 很接近
+        # if self.p is not None and self.p != (0,0)
+        if self.P == (0, 0):
+            self.P = P
+        if self.p > 100000:
+            for GF in __import__('tqdm').tqdm(range(self.p - 100000, self.p)):
+                if self.get_scalar_multiplication(1, self.P) == self.get_scalar_multiplication(1 + GF, self.P):
+                    self.get_GF(GF)
+                    return True
+        return False
+
     def __str__(self):
         return "$$ y^2 \equiv x^3 + {a}x + {b} (mod \;{p})$$".format(a=self.a, b=self.b, p=self.p)
 
+
 # if __name__ == '__main__':
-#     E1 = DiscreteEllipticCurve(2, 3, 97)
-#     TMP = E1.get_scalar_multiplication(8, (3, 6))
-#     print(TMP)
+#     A = 658974
+#     p = 962280654317
+#     P = (518459267012, 339109212996)
+#     E1 = DiscreteEllipticCurve(A, 618, p, GF=p)
+#     for i in
+
+    # TMP = E1.get_scalar_multiplication(8, (3, 6))
+    # print(E1.fast_GF(P))
